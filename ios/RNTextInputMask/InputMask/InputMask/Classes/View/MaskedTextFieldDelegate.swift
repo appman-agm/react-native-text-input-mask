@@ -222,10 +222,15 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
             withCharacters: text
         )
         
+        var modifiedIndex = self.caretPosition(inField: field) + text.characters.count
+        if (updatedText.count < modifiedIndex) {
+            let diff = modifiedIndex - updatedText.count
+            modifiedIndex -= diff
+        }
         let result: Mask.Result = self.mask.apply(
             toText: CaretString(
                 string: updatedText,
-                caretPosition: updatedText.index(updatedText.startIndex, offsetBy: self.caretPosition(inField: field) + text.characters.count)
+                caretPosition: updatedText.index(updatedText.startIndex, offsetBy: modifiedIndex)
             ),
             autocomplete: self.autocomplete
         )
