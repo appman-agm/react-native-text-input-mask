@@ -165,6 +165,11 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
+     
+        //Allow only number and backspace
+        if Int(string) == nil && string.count > 0 {
+            return false
+        }
         
         let extractedValue: String
         let complete:       Bool
