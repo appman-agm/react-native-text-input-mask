@@ -124,7 +124,7 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     }
     
     /**
-     Minimal length of the text inside the field to fill all mandatory characters in the mask.
+     Minimal length of the text inside the field to fill all mandatory chaacters in the mask.
      
      - returns: Minimal satisfying count of characters inside the text field.
      */
@@ -165,6 +165,11 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
+     
+        //Allow only number and backspace and .
+        if (Int(string) == nil && string.count > 0) && (string != ".") {
+            return false
+        }
         
         let extractedValue: String
         let complete:       Bool
