@@ -38,7 +38,8 @@ RCT_EXPORT_METHOD(unmask:(NSString *)maskString inputValue:(NSString *)inputValu
     onResult(@[output]);
 }
 
-RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask) {
+RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask inputValue:(NSString *)inputValue) {
+    
     [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *, RCTSinglelineTextInputView *> *viewRegistry ) {
         dispatch_async(dispatch_get_main_queue(), ^{
             RCTSinglelineTextInputView *view = viewRegistry[reactNode];
@@ -54,7 +55,7 @@ RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask) {
             [masks[key] setListener:self];
             textView.delegate = masks[key];
             
-            [self updateTextField:maskedDelegate textView:textView];
+            [self updateTextField:maskedDelegate textView:textView setText:inputValue];
         });
     }];
 }
@@ -87,17 +88,16 @@ RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask) {
 }
 
 
-- (void)updateTextField:(MaskedTextFieldDelegate *)maskedDelegate textView:(RCTUITextField *)textView {
-    if(textView.attributedText.string.length> 0){
-        NSString *originalString = textView.attributedText.string;
+- (void)updateTextField:(MaskedTextFieldDelegate *)maskedDelegate textView:(RCTUITextField *)textView setText:(NSString *)setText {
+    NSString *originalString = setText;
+    if ((textView.attributedText.string.length> 0) || (textView.attributedText.string.length >= 0 && originalString.length > 0 )){
         NSString *croppedText = [originalString substringToIndex:[originalString length] -1];
-        
         [textView setAttributedText:[[NSAttributedString alloc] initWithString:croppedText]];
         NSString *last = [originalString substringFromIndex:[originalString length] - 1];
-        
-        [maskedDelegate textField:(UITextField*)textView
-    shouldChangeCharactersInRange: (NSRange){[textView.attributedText.string length], 0}
-                replacementString:last];
+        UITextField* textfield = (UITextField*)textView;
+       [maskedDelegate textField:textfield
+             shouldChangeCharactersInRange: (NSRange){[textfield.attributedText.string length], 0}
+                         replacementString:last];
     }
 }
 

@@ -21,30 +21,25 @@ export default class TextInputMask extends Component {
 
   componentDidMount() {
     if (this.props.value && !this.props.mask) {
-      this.input && this.input.setNativeProps({ text: this.props.value })
+      return this.input && this.input.setNativeProps({ text: this.props.value })
     }
 
     if (this.props.maskDefaultValue && this.props.mask && this.props.value) {
-      mask(this.props.mask, '' + this.props.value, text =>
+      setMask(findNodeHandle(this.input), this.props.mask, this.props.value)
+      return mask(this.props.mask, '' + this.props.value, text =>
         this.input && this.input.setNativeProps({ text }),
       )
     }
 
     if (this.props.mask && !this.masked) {
       this.masked = true
-      setMask(findNodeHandle(this.input), this.props.mask)
+      return setMask(findNodeHandle(this.input), this.props.mask, this.props.value)
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.mask && (this.props.value !== nextProps.value)) {
-      mask(this.props.mask, '' + nextProps.value, text =>
-      this.input && this.input.setNativeProps({ text })
-      );
-    }
-
-    if (this.props.mask !== nextProps.mask) {
-      setMask(findNodeHandle(this.input), nextProps.mask)
+      setMask(findNodeHandle(this.input), nextProps.mask, nextProps.value)
     }
   }
 
