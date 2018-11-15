@@ -55,7 +55,7 @@ RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask in
             [masks[key] setListener:self];
             textView.delegate = masks[key];
             
-            [self updateTextField:maskedDelegate textView:textView setText:inputValue];
+            [self updateTextField:maskedDelegate textView:textView setText:inputValue mask:mask];
         });
     }];
 }
@@ -88,16 +88,22 @@ RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask in
 }
 
 
-- (void)updateTextField:(MaskedTextFieldDelegate *)maskedDelegate textView:(RCTUITextField *)textView setText:(NSString *)setText {
-    NSString *originalString = setText;
-    if ((textView.attributedText.string.length> 0) || (textView.attributedText.string.length >= 0 && originalString.length > 0 )){
+- (void)updateTextField:(MaskedTextFieldDelegate *)maskedDelegate textView:(RCTUITextField *)textView setText:(NSString *)setText mask:(NSString *)mask {
+    
+    NSString *originalString = textView.attributedText.string;
+    if(textView.attributedText.string.length> 0 || ((textView.attributedText.string.length == 0) && (setText.length == 5))){
+        
+        if (![originalString isEqualToString:setText] && [mask isEqualToString:@"[00000]"] && (setText.length == 5)) {
+            originalString = setText;
+        }
+        
         NSString *croppedText = [originalString substringToIndex:[originalString length] -1];
         [textView setAttributedText:[[NSAttributedString alloc] initWithString:croppedText]];
         NSString *last = [originalString substringFromIndex:[originalString length] - 1];
-        UITextField* textfield = (UITextField*)textView;
-       [maskedDelegate textField:textfield
-             shouldChangeCharactersInRange: (NSRange){[textfield.attributedText.string length], 0}
-                         replacementString:last];
+        
+        [maskedDelegate textField:(UITextField*)textView
+    shouldChangeCharactersInRange: (NSRange){[textView.attributedText.string length], 0}
+                replacementString:last];
     }
 }
 
