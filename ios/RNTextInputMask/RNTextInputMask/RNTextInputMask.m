@@ -91,8 +91,8 @@ RCT_EXPORT_METHOD(setMask:(nonnull NSNumber *)reactNode mask:(NSString *)mask in
 - (void)updateTextField:(MaskedTextFieldDelegate *)maskedDelegate textView:(RCTUITextField *)textView setText:(NSString *)setText mask:(NSString *)mask {
     
     NSString *originalString = textView.attributedText.string;
-    if(textView.attributedText.string.length> 0 || ((textView.attributedText.string.length == 0) && (setText.length == 5))){
-        
+    if(textView.attributedText.string.length> 0 || ((textView.attributedText.string.length == 0) && (setText.length == 5) && [mask isEqualToString:@"[00000]"])){
+
         if (![originalString isEqualToString:setText] && [mask isEqualToString:@"[00000]"] && (setText.length == 5)) {
             originalString = setText;
         }
