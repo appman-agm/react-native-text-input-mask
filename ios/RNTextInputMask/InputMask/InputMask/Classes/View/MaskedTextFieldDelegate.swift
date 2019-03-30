@@ -39,6 +39,7 @@ import UIKit
  Might be used as a decorator, which forwards UITextFieldDelegate calls to its own listener.
  */
 @IBDesignable
+@objcMembers
 open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
     
     private var _maskFormat:            String
@@ -311,7 +312,7 @@ open class MaskedTextFieldDelegate: NSObject, UITextFieldDelegate {
 internal extension MaskedTextFieldDelegate {
     
     func isDeletion(inRange range: NSRange, string: String) -> Bool {
-        return 0 < range.length && 0 == string.characters.count
+        return 0 < range.length && 0 == string.count
     }
     
     func replaceCharacters(inText text: String?, range: NSRange, withCharacters newText: String) -> String {
@@ -334,7 +335,7 @@ internal extension MaskedTextFieldDelegate {
         // Workaround for non-optional `field.beginningOfDocument`, which could actually be nil if field doesn't have focus
         guard field.isFirstResponder
         else {
-            return field.text?.characters.count ?? 0
+            return field.text?.count ?? 0
         }
         
         if let range: UITextRange = field.selectedTextRange {
@@ -352,7 +353,7 @@ internal extension MaskedTextFieldDelegate {
             return
         }
 
-        if position > field.text!.characters.count {
+        if position > field.text!.count {
             return
         }
         
